@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Welcome! Please login</title>
+		<link rel="stylesheet" href="loginstyle.css"/>	
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="login.js"></script>
+		<link rel="stylesheet" href="loginstyle.css">
+	</head>
+
+	<body>
+		<br/>
+		<br/>
+		<div class="container" ng-app="loginApp" ng-controller="LoginController">
+				<form class="login" id="loginForm" name="loginForm" ng-submit="loginForm.$valid && authenticate()" novalidate>
+					<h2 class="login-heading">Please sign in</h2>
+					
+					<label class="sr-only">Username :</label>
+					<input id="username" name="username" class="form-control" type="text" autofocus="" ng-model="user.name" ng-maxlength="10" placeholder="Username" required>
+					<div class="help-block" ng-show="loginForm.username.$error.maxlength">Username is too long</div>
+
+					<label class="sr-only">Password :</label>
+					<input name="password" id="password" class="form-control" type="password" placeholder="Password" ng-model="user.password" ng-maxlength="8" required>
+					<div class="help-block" ng-show="loginForm.password.$error.maxlength">Password is too long</div>						
+					
+					<input  class="btn btn-lg btn-primary btn-block" type="submit" name="btnlogin" id="btnlogin" value="Login" ng-disabled="loginForm.$invalid" />
+					<div id="errorMsg"></div>	
+					<br/>
+					
+					<button class="btn btn-lg btn-primary btn-block" name="register" id="regbutton" onclick="window.location='registration.html';">Register!</button>
+				</form>
+				
+				<div class="container site-desc">
+					<h1>Welcome to Lyra!</h1>
+					<h2>The microblogging network that <br/>
+						helps you stay in contact with the <br/>
+						important people in your life and <br/>
+						discover new exciting ones.</h2>
+				</div>
+		</div>
+	</body>
+</html>

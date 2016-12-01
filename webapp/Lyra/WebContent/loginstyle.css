@@ -1,0 +1,57 @@
+body {
+	background-image: url("http://i1142.photobucket.com/albums/n617/matanfintz/login-background_zpsw8sqw5jn.jpg");
+	background-size: 100% ;
+	padding-top: 40px;
+	padding-bottom: 40px;
+	background-color: #eee;
+}
+
+.login {
+	max-width: 330px;
+	margin: 0 auto;
+	padding: 15px;
+	
+}
+
+
+
+.login .form-control {
+	padding: 10px;
+	font-size: 16px;
+	position: relative;
+	box-sizing: border-box;
+	height: auto;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	
+	
+}
+
+.login .form-control:focus {
+	z-index: 3;
+}
+
+.login .login-heading,
+.login .checkbox {
+	margin-bottom: 10px;
+}
+
+
+
+.login input[type="text"] {
+	margin-bottom: -1px;
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+.login input[type="password"] {
+	margin-bottom: 10px;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+}
+
+.site-desc {
+	position: absolute;
+    left: 100px;
+    bottom: 150px;
+}

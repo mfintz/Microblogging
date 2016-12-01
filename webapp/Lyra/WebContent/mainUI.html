@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Lyra</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+		<link rel="stylesheet" href="MainUIStyle.css"/>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>  
+	    <script type="text/javascript" src="mainUI.js"></script>
+	    <script type="text/javascript" src="profile.js"></script>
+	</head>
+	<body ng-app="mainApp" ng-controller="mainController as mainCtrl">
+		<section>
+			<!-- Navbar start -->
+			<nav class="navbar navbar-inverse navbar-fixed-top">
+			  <div class="container-fluid">
+		         <ul class="nav navbar-nav"> 
+					 <li role="presentation" ng-class="{ active:isSet(1) }">
+					 	<a href="" ng-click="setTab(1); readPosts()" >
+					 		<span class="glyphicon glyphicon-home"></span> Home
+					 	</a>
+					 </li>
+					 <li role="presentation" ng-class="{ active:isSet(2) }">
+					 	<a href="" ng-click="setTab(2); discoverPosts()">
+					 		<span class="glyphicon glyphicon-eye-open"></span> Discover
+					 	</a>
+					 </li>
+				 </ul>
+				 <ul class="nav navbar-nav navbar-right">
+			         <li role="presentation" ng-class="{ active:isSet(3) }">
+			         	<a href="" ng-click="showCurrUserProfile();setProfTab(1);setTab(3);readUserPosts();"><span class="glyphicon glyphicon-user"></span> {{user.nickname}}</a>
+			         </li>
+			     </ul>
+			  </div>
+			</nav>
+			<!-- Navbar end -->
+			
+			<br/>
+			<br/>
+			<br/>
+			
+			<!--  Home Tab's Content  -->
+			<div class="container" ng-show="isSet(1)">
+				<br/>
+				<div class="row">
+					<div class="col-xs-8">
+						<div class="form-group">
+						  <label>Write a new post:</label>
+						  <textarea class="form-control" rows="5" id="taComment" name="taComment" placeholder="What's on your mind?" ng-model="counter" ng-trim="false" maxlength="140"></textarea><span>{{140 - counter.length}} characters left</span>
+						</div>
+						<button class="btn btn-primary btn-sm" ng-click="postNewComment()">Post</button>
+					</div>
+				</div>
+				<hr>
+				<br/>
+				<div id="allPosts">
+					<div class="post-type" ng-repeat="post in recentPosts">
+						<p>Posted by: <a href="" ng-click="showProfileTunnel(post.authorName)">{{post.authorName}}</a> ({{post.postTime | timeAgo}})</p>
+						<p ng-bind-html="post.postText"></p>			
+						<p><a href="" ng-click="writeReply(post)">Reply</a> &middot;
+						   <a href="" data-toggle="modal" data-target="#repubModal" data-whatever={{$index}}>Republish</a> &middot; 
+						   {{post.repubs}} <span title="Republishes" class="glyphicon glyphicon-share-alt"></span>
+						</p>	
+					</div>
+				</div>
+			</div>
+			<!--  End of Home Tab's Content  -->
+			
+			
+			<!--  Discover Tab's Content  -->
+			<div class="container" ng-show="isSet(2)">
+				<div class="checkbox">
+					<label>
+		    			<input type="checkbox" ng-model="checkboxModel.value" ng-change="discoverPosts()" />
+		    				Display only messages of users who I follow
+		  			</label>
+				</div>
+				<hr>
+				<br/>
+				<div id="allDiscoverPosts">
+					<div class="post-type" ng-repeat="post in topPosts">
+						<p>Posted by: <a href="" ng-click="showProfileTunnel(post.authorName)">{{post.authorName}}</a> ({{post.postTime | timeAgo}})</p>
+						<p ng-bind-html="post.postText"></p>
+						<p><a href="" ng-click="setTab(1); writeReply(post)">Reply</a> &middot;
+						   <a href="" data-toggle="modal" data-target="#repubModal" data-whatever={{$index}}>Republish</a> &middot; 
+						   {{post.repubs}} <span title="Republishes" class="glyphicon glyphicon-share-alt"></span>
+						</p>			
+					</div>
+				</div>
+			</div>
+			<!--  End of Discover Tab's Content  -->
+
+
+			<!-- User profile's content -->
+			<div class="container" ng-show="isSet(3) || isSet(4)">	
+				
+				<div class="jumbotron">
+					<div class="row">
+						<div class="col-xs-2">
+							<img ng-src='{{profUser.photo}}' class="img-rounded" alt="user photo" height="170" width="170"/>
+						</div>
+						<div class="col-xs-5">
+							<h2>{{profUser.nickname}}</h2>							 
+							<blockquote>{{profUser.description}}</blockquote>
+						</div>								
+						<div class="col-xs-1">
+							<button type="button" class="btn btn-default btn-sm" ng-show="!isFollowing(profUser.id)" ng-click="follow(profUser.id)">
+					 			<span class="glyphicon glyphicon-plus-sign"></span> Follow
+					     	</button>
+					     	<button type="button" class="btn btn-default btn-sm" disabled ng-show="isFollowing(profUser.id)">
+					 			<span class="glyphicon glyphicon-ok-sign"></span> Following
+					     	</button>
+						</div>
+	
+						<div class="btn-group btn-group-justified" role="group" aria-label="...">
+						<ul class="nav nav-pills nav-justified">
+						  <li role="presentation" ng-class="{ active:isProfTabSet(1)}">
+						  	<a href="" ng-click="setProfTab(1); readUserPosts()"><span class="glyphicon glyphicon-list"></span> Latest messages</a>
+						  </li>
+						  <li role="presentation" ng-class="{ active:isProfTabSet(2)}">
+						  	<a href="" ng-click="setProfTab(2); showFollow()"><span class="glyphicon glyphicon-arrow-up"></span> Following <span class="badge badge-inverse">{{numOfFollowing}}</span></a>
+						  </li>
+						  <li role="presentation" ng-class="{ active:isProfTabSet(3)}">
+						  	<a href="" ng-click="setProfTab(3); showFollow()"><span class="glyphicon glyphicon-arrow-down"></span> Followers <span class="badge badge-inverse">{{numOfFollowers}}</span></a>
+						  </li>
+						</ul>
+						</div>			 			
+					</div>
+				</div>					
+				
+				<!-- Inner Profile Tabs -->
+				<div id="userTenPosts" ng-show="isProfTabSet(1)">
+					<div class="post-type" ng-repeat="usrpst in userTenPosts">
+						<p>Posted by: <a href="" ng-click="showProfileTunnel(usrpst.authorName)">{{usrpst.authorName}}</a> ({{usrpst.postTime |timeAgo}})</p>
+						<p ng-bind-html="usrpst.postText"></p>			
+						<p><a href="" ng-click="setTab(1); writeReply(usrpst)">Reply</a> &middot; 
+						   <a href="" data-toggle="modal" data-target="#repubModal" data-whatever={{$index}}>Republish</a> &middot; 
+						   {{usrpst.repubs}} <span title="Republishes" class="glyphicon glyphicon-share-alt"></span>
+						</p>	
+					</div>
+				</div>
+				
+				<div id="Following" ng-show="isProfTabSet(2) || isProfTabSet(3)">
+					<div class="list-group-item" ng-repeat="follower in userTenFollowers">
+						<p>						
+							<img ng-src='{{follower.photo}}' alt="User photo" class="img-rounded" height="50" width="50"/>
+							<a href="" ng-click="showProfileTunnel(follower.nickname)">{{follower.nickname}}</a>   
+						 	<button type="button" class="btn btn-default btn-sm" ng-show="!isFollowing(follower.id)" ng-click="follow(follower.id)">
+					 			<span class="glyphicon glyphicon-plus-sign"></span> Follow
+					     	</button>
+					     	<button type="button" class="btn btn-default btn-sm" disabled ng-show="isFollowing(follower.id)">
+					 			<span class="glyphicon glyphicon-ok-sign"></span> Following
+					     	</button>
+						</p>
+					</div>
+				</div>
+				<!-- End of Inner Profile Tabs -->
+
+			</div>
+			<!-- End of User Profile -->
+			
+			
+			<!--  Topic Tab's Content  -->
+			<div class="container" ng-show="isSet(5)">
+				<div id="topicInfo" class="alert alert-info floating-info-alert hidden text-center" role="alert" >
+				  <a href="javascript:updateTopic()" class="alert-link">New posts available! Click to refresh</a>
+				</div> 
+				<div class="page-header">
+				  <h1>10 latests posts including <span class="topic-text">#{{viewTopic}}</span>:</h1>
+				</div>
+			
+				<div id="allTopicPosts">
+					<div class="post-type" ng-repeat="post in topicTenPosts">
+						<p>Posted by: <a href="" ng-click="showProfileTunnel(post.authorName)">{{post.authorName}}</a> ({{post.postTime | timeAgo}})</p>
+						<p ng-bind-html="post.postText"></p>			
+						<p><a href="" ng-click="setTab(1); writeReply(post)">Reply</a> &middot; 
+						   <a href="" data-toggle="modal" data-target="#repubModal" data-whatever={{$index}}>Republish</a> &middot; 
+						   {{post.repubs}} <span title="Republishes" class="glyphicon glyphicon-share-alt"></span>
+						</p>		
+					</div>
+				</div>
+			</div>
+			<!--  End of Topic Tab's Content  -->
+			
+			
+			<!-- Republish Modal Dialog -->
+			<div class="modal fade" id="repubModal" role="dialog" aria-labelledby="repubLabel" aria-hidden="true">
+			  <div class="modal-dialog">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        <h4 class="modal-title" id="repubLabel">Republish Post</h4>
+			      </div>
+			      <div class="modal-body">
+			        <form>
+			          <div class="form-group">
+			            <label class="control-label">Original Post:</label>
+			            <p class="disabled-box" id="repubText" ng-bind-html="rePost.postText"></p>
+			          </div>
+			        </form>
+			      </div>
+			      <div class="modal-footer">
+			      	<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			      	<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="writeRepublish()">Republish</button>			        
+			      </div>
+			    </div>
+			  </div>
+			</div>
+			<!-- End of Republish Modal Dialog -->			
+		</section>
+	</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Registration</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="registrationstyle.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="registration.js"></script>  
+</head>
+<body>
+	<br/>
+	<br/>
+	<div class="container" ng-app="regApp" ng-controller="RegisterController">
+		  <h2>Register here!</h2>
+		  <form id="regForm" name="regForm" ng-submit="regForm.$valid && register()" novalidate>   
+			    <div class="form-group" ng-class="{'has-error' : regForm.username.$invalid && !regForm.username.$pristine}">
+			      <label for="username">Username:</label>
+			      <input type="text" class="form-control" id="username" name="username" ng-model="user.name" ng-maxlength="10" required placeholder="Enter Username">
+			      <div class="help-block" ng-show="regForm.username.$error.maxlength">Username is too long</div>
+			    </div>
+			    
+			    <div class="row form-group">
+				    <div class="col-xs-6 col-sm-6 col-md-6" ng-class="{'has-error' : regForm.pwd.$invalid && !regForm.pwd.$pristine}">
+				      <label for="pwd">Password:</label>
+				      <input type="password" class="form-control" id="pwd" name="pwd" ng-model="user.password" ng-maxlength="8" required placeholder="Enter password">
+				      <div class="help-block" ng-show="regForm.pwd.$error.maxlength">Password is too long</div>
+				    </div>
+				    
+				    <div class="col-xs-6 col-sm-6 col-md-6" ng-class="{'has-error' : (regForm.repwd.$invalid || (user.password != user.repassword)) && !regForm.repwd.$pristine}">
+				      <label for="repwd">Re-enter Password:</label>
+				      <input type="password" class="form-control" id="repwd" name="repwd" ng-model="user.repassword" ng-maxlength="8" required placeholder="Re-enter password">
+				      <div class="help-block" ng-show="regForm.repwd.$error.maxlength">Password is too long</div>
+				      <div class="help-block" ng-show="!regForm.repwd.$pristine && (user.password != user.repassword)">Passwords must match</div>  
+				    </div>
+			    </div>
+			    
+			    <div class="form-group" ng-class="{'has-error' : regForm.nickname.$invalid && !regForm.nickname.$pristine}">
+			      <label for="nickname">Enter Nickname:</label>
+			      <input type="text" class="form-control" id="nickname" name="nickname" ng-model="user.nickname" ng-maxlength="20" required placeholder="Choose Nickname">
+			      <div class="help-block" ng-show="regForm.nickname.$error.maxlength">Nickname is too long</div>
+			    </div>
+			    
+			    <div class="form-group">
+			      <label>Enter a short description:</label>
+			      <textarea class="form-control ng-dirty" rows="3" id="description" name="description" ng-model="user.desc" placeholder="Enter up to 50 words"></textarea>
+			      <div id="descErr"></div>
+			    </div>
+			    
+			    <div class="form-group">
+			      <label for="photourl">Enter photo URL:</label>
+			      <input type="text" class="form-control" id="photourl" name="photourl" ng-model="user.photourl" placeholder="Enter photo URL">
+			    </div>
+		    
+			    <input type="submit" class="btn btn-primary" value="Submit" ng-disabled="user.password != user.repassword || regForm.$invalid"/>
+		  <div id="errorMsg"></div>
+		  </form>
+	</div>
+</body>
+</html>
